@@ -23,19 +23,19 @@ case class PetsCategoryAggregate(aggregateId: String, repo: PetsCategoriesRepo) 
 
   override def receiveCommand: Receive = {
     case CreatePetsCategoryCmd(name) if category == null => {
-      persist(PetsCategoryCreated(aggregateId, name)) { ev =>
+      persist(PetsCategoryCreated(name)) { ev =>
         processPersistEvent(ev)
       }
       sender() ! OK(aggregateId)
     }
     case UpdatePetsCategoryCmd(_, name) if category != null && !category.archived => {
-      persist(PetsCategoryUpdated(aggregateId, name)) { ev =>
+      persist(PetsCategoryUpdated(name)) { ev =>
         processPersistEvent(ev)
       }
       sender() ! OK(aggregateId)
     }
     case ArchivePetsCategoryCmd(name) if category != null && !category.archived => {
-      persist(PetsCategoryArchived(aggregateId)) { ev =>
+      persist(PetsCategoryArchived) { ev =>
         processPersistEvent(ev)
       }
       sender() ! OK(aggregateId)
@@ -53,15 +53,15 @@ case class PetsCategoryAggregate(aggregateId: String, repo: PetsCategoriesRepo) 
   }
 
   private def updateState(event: PetsCategoryEvent): Unit = event match {
-    case PetsCategoryCreated(id, name) => {
-      category = PetsCategory(id, name)
+    case PetsCategoryCreated(name) => {
+      category = PetsCategory(persistenceId, name)
       save()
     }
-    case PetsCategoryUpdated(id, name) => {
+    case PetsCategoryUpdated(name) => {
       category = category.copy(name = name)
       save()
     }
-    case PetsCategoryArchived(_) => {
+    case PetsCategoryArchived => {
       category = category.copy(archived = true)
       save()
     }

@@ -1,3 +1,5 @@
 package io.rlc.infra
 
-trait DomainEvent
+trait DomainEvent {
+  val tag: String
+}
