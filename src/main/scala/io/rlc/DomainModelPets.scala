@@ -1,14 +1,18 @@
-package io.rlc.pets.domain
+package io.rlc
+
+import akka.actor.Props
 
 import io.rlc.infra.DomainModel
 import io.rlc.infra.utils.UUID
 import io.rlc.pets.domain.categories.PetsCategoryAggregate
-import scala.reflect._
+import io.rlc.pets.view.CategoryList
 
 object DomainModelPets {
 
   val model = DomainModel("DomainModelPetsSystem")
   model.registerAggregateType[PetsCategoryAggregate]
+
+  val view = model.actor(Props(new CategoryList))
 
   def newCategory() = {
     model.aggregateOf[PetsCategoryAggregate](UUID.next().toString)

@@ -7,6 +7,9 @@ class TaggingEventsAdapter(system: ExtendedActorSystem) extends WriteEventAdapte
   override def manifest(event: Any): String = ""
 
   override def toJournal(event: Any): Any = event match {
-    case e: DomainEvent => Tagged(event, Set(e.tag))
+    case e: DomainEvent => {
+      println("tag event with tag " + e.tag )
+      Tagged(event, Set(e.tag))
+    }
   }
 }

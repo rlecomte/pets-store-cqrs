@@ -14,6 +14,10 @@ class DomainModel(name: String) {
   val aggregateTypeRegistry = scala.collection.mutable.Map[String, AggregateType]()
   val system = ActorSystem(name)
 
+  def actor(props: Props) = {
+    system.actorOf(props) ! "start"
+  }
+
   def aggregateOf[T](id: String)(implicit classTag: ClassTag[T]): AggregateRef = {
     val typeName = classTag.toString()
     if (aggregateTypeRegistry.contains(typeName)) {

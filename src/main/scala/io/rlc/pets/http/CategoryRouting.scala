@@ -5,7 +5,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
 
-import io.rlc.pets.domain.DomainModelPets
+import io.rlc.DomainModelPets
 import io.rlc.pets.domain.categories.command.{ArchivePetsCategoryCmd, CreatePetsCategoryCmd}
 import io.rlc.pets.http.utils.ResultHandler
 

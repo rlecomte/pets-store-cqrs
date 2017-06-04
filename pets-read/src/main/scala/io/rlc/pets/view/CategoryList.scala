@@ -26,13 +26,15 @@ class CategoryList extends PersistentActor {
     val queries = PersistenceQuery(context.system).readJournalFor[CassandraReadJournal](CassandraReadJournal.Identifier)
     queries.eventsByTag("PetsCategoryEvent", Offset.noOffset)
       .collect { case envelope@EventEnvelope(_, id, _, ev: PetsCategoryEvent) => (id, ev) }
-      .to(Sink.actorRef(self, ()))
+      .runWith(Sink.actorRef(self, "complete"))
   }
 
   override def receiveCommand: Receive = {
     case (id:String, PetsCategoryCreated(name)) => categories += (id -> name); show()
     case (id:String, PetsCategoryUpdated(name)) => categories += (id -> name); show()
     case (id:String, PetsCategoryArchived) => categories.remove(id); show()
+    case "start" => println("START VIEW!!!!"); recoveryCompleted()
+    case "complete" => println("Complete recovery")
   }
 
   def show() = {
